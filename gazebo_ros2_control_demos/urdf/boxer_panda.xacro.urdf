@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot name="boxer_panda" xmlns:xacro="http://ros.org/wiki/xacro">
+
+ <!-- Load Boxer description -->
+  <xacro:include filename="$(find gazebo_ros2_control_demos)/urdf/test_boxer.xacro.urdf"/>
+  
+  <joint name="arm_mount_joint" type="fixed">
+    <parent link="mid_mount" />
+    <child link="arm_mount_link" />
+    <origin xyz="$(optenv BOXER_FRANKA_XYZ 0.21 0.0 0.0)" rpy="$(optenv BOXER_FRANKA_RPY 0 0 0)"/>
+  </joint>
+
+  <link name="arm_mount_link"/>
+
+  <xacro:arg name="arm_id" default="panda"/> <!-- Name of this panda -->
+  <xacro:arg name="hand" default="true"/> <!-- Should a franka_gripper be mounted at the flange?" -->
+
+  <xacro:include filename="$(find gazebo_ros2_control_demos)/urdf/panda_arm.xacro"/>
+  <xacro:panda_arm arm_id="$(arg arm_id)" safety_distance="0.03" connected_to="arm_mount_link" />
+
+  <xacro:if value="$(arg hand)">
+    <xacro:include filename="$(find gazebo_ros2_control_demos)/urdf/hand.xacro"/>
+    <xacro:hand ns="$(arg arm_id)" rpy="0 0 ${-pi/4}" connected_to="$(arg arm_id)_link8" safety_distance="0.03"/>
+  </xacro:if>
+<!--
+  <xacro:include filename="$(find gazebo_ros2_control_demos)/urdf/panda_arm.xacro.urdf"/>
+  <xacro:include filename="$(find franka_description)/robots/panda_arm.xacro"/>
+  <xacro:include filename="$(find franka_description)/robots/hand.xacro"/>
+  <xacro:panda_arm arm_id="$(arg arm_id)" safety_distance="0.03" connected_to="arm_mount_link"/>
+  <xacro:hand rpy="0 0 ${-pi/4}" connected_to="panda_link8"/>
+
+-->
+</robot>

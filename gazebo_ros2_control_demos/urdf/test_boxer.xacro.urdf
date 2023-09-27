@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<robot name="boxer" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find gazebo_ros2_control_demos)/urdf/materials.urdf.xacro"/>
+  <!-- The robot's origin, center-bottom of the main chassis -->
+  <link name="base_link" />
+
+
+  <!-- The main chassis for the robot -->
+  <link name="chassis_link">
+    <inertial>
+      <!-- TODO inertial data copied from old boxer, may need fixing -->
+      <origin xyz="0 0 0.07" rpy="0 0 0" />
+      <mass value="51"/>
+      <inertia ixx="2.3" ixy="0" ixz="0" iyy="3.35" iyz="0.00" izz="1.22"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="file://$(find gazebo_ros2_control_demos)/meshes/boxer24_no_sensors.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Boxer_DarkGrey" />
+    </visual>
+    <collision>
+      <geometry>
+        <!-- For simplicity, use a box collider instead of the pretty mesh -->
+        <box size="0.74143 0.55093 0.2884" rpy="0 0 0" />
+      </geometry>
+      <origin xyz="0 0 0.1442" rpy="0 0 0" />
+    </collision>
+  </link>
+
+  <joint name="chassis_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="chassis_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <gazebo reference="chassis_link">
+    <visual>
+      <material>Gazebo/Orange</material>
+    </visual>
+  </gazebo>
+
+  <link name="top_plate_link" />
+
+  <joint name="top_plate_joint" type="fixed">
+    <parent link="chassis_link" />
+    <child link="top_plate_link" />
+    <origin xyz="0 0 0.2884" rpy="0 0 0" />
+  </joint>
+
+  <link name="mid_mount" />
+  <joint name="mid_mount_joint" type="fixed">
+    <parent link="top_plate_link" />
+    <child link="mid_mount" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+
+  <!-- The wheels all rotate around their X axis, so for simplicity include a rotated parent link -->
+  <link name="drive_train_link" />
+
+  <joint name="drive_train_joint" type="fixed">
+    <parent link="chassis_link" />
+    <child link="drive_train_link" />
+    <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
+  </joint>
+
+  <xacro:macro name="rotacastor" params="name parent *origin">
+    <link name="${name}_link">
+      <inertial>
+        <origin xyz="0 0 0.0005" rpy="0 0 0"/>
+        <mass value="100"/>
+        <inertia ixx="0.2" ixy="0" ixz="0" iyy="0.2" iyz="0" izz="0.2"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 1.5708 0" />
+        <geometry>
+          <cylinder radius="0.0625" length="0.0827" />
+        </geometry>
+        <material name="Boxer_Black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.0005" rpy="0 1.5708 0" />
+        <geometry>
+          <cylinder radius="0.0625" length="0.0827" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <axis  xyz="1 0 0" />
+      <dynamics damping="0.05" />
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <material>Gazebo/DarkGrey</material>
+      <selfCollide>false</selfCollide>
+      <!-- For castors, we need high PID values to avoid slippage -->
+      <kp value="10000000.0" />
+      <kd value="10000.0" />
+      <!-- Castors will slide freely to allow turning -->
+      <mu1 value="0.0"/> 
+      <mu2 value="0.0"/>
+      <minDepth>0.000</minDepth>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="drive_wheel" params="name parent *origin">
+    <link name="${name}_link">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="100"/>
+        <inertia ixx="0.2" ixy="0" ixz="0" iyy="0.2" iyz="0" izz="0.2"/>    <!-- ixx =0,1669 iyy= 0,1669   0.32 -->
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 1.5708 0" />
+        <geometry>
+          <cylinder radius="0.080" length="0.04" />
+        </geometry>
+        <material name="Boxer_Black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 1.5708 0" />
+        <geometry>
+          <cylinder radius="0.080" length="0.04" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_joint" type="continuous">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <axis xyz="1 0 0" />
+      <dynamics damping="0.05" />   <!--damping = 1.0-->
+    </joint>
+
+
+    <gazebo reference="${name}_link">
+      <material>Gazebo/Black</material>
+      <selfCollide>false</selfCollide>
+      <!-- For wheels, we need high PID values to avoid slippage -->
+      <kp value="100000000.0" />                 <!-- any value below this causes wheels to sink below the plane -->
+      <kd value="10000.0" />
+      <!-- Wheels have friction to prevent slippage -->
+       <!-- default mu1 and mu2 value="0.1" -->
+       <mu1 value="0.1"/> 
+       <mu2 value="0.1"/>
+      <minDepth>0.0001</minDepth>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:rotacastor name="rotacastor_right" parent="drive_train_link">
+    <origin xyz="-0.1937 -0.2792 0.0347" rpy="0 0 0" />
+  </xacro:rotacastor>
+  <xacro:rotacastor name="rotacastor_left" parent="drive_train_link">
+    <origin xyz="0.1937 -0.2792 0.0347" rpy="0 0 0" />
+  </xacro:rotacastor>
+
+  <xacro:drive_wheel name="wheel_right" parent="drive_train_link">
+    <origin xyz="-0.2436 0.1503 0.0526" rpy="0 0 0" />
+  </xacro:drive_wheel>
+  <xacro:drive_wheel name="wheel_left" parent="drive_train_link">
+    <origin xyz="0.2436 0.1503 0.0526" rpy="0 0 0" />
+  </xacro:drive_wheel>
+  
+<!--
+  <gazebo>
+ 
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <parameters>$(find gazebo_ros2_control_demos)/config/boxer_controller.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="wheel_left_joint">
+        <command_interface name="velocity">
+            <param name="min">-1.0</param>
+            <param name="max">1.0</param>
+        </command_interface>
+        <state_interface name="position" />
+        <state_interface name="velocity" />
+    </joint>
+    <joint name="wheel_right_joint">
+        <command_interface name="velocity">
+            <param name="min">-1.0</param>
+            <param name="max">1.0</param>
+        </command_interface>
+        <state_interface name="velocity" />
+        <state_interface name="position" />
+    </joint>
+
+  </ros2_control>
+  -->
+  
+</robot>
