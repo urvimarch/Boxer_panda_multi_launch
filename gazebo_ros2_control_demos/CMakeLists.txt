@@ -27,7 +27,7 @@ install(DIRECTORY
   config
   urdf
   meshes
-  world
+  worlds
   gazebo_ros2_control_demos
   DESTINATION share/${PROJECT_NAME}/
 )
