@@ -26,6 +26,9 @@ install(DIRECTORY
   launch
   config
   urdf
+  meshes
+  world
+  gazebo_ros2_control_demos
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -66,6 +69,9 @@ ament_target_dependencies(example_tricycle_drive
   geometry_msgs
 )
 
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
@@ -86,4 +92,11 @@ install(
     lib/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+gazebo_ros2_control_demos/twist_control_pub.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()
+
+

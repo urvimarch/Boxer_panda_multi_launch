@@ -1,0 +1,8 @@
+.vscode/
+.github/
+.doc/
+.docker/
+CHANGELOG.rst
+.pre-commit-config.yaml
+LICENSE
+README.md
