@@ -1,0 +1,16 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/athena/ros2_ws/install/py_srvcli/lib/python3.10/site-packages",
+        "/home/athena/ros2_ws/install/tutorial_interfaces/lib/python3.10/site-packages",
+        "/home/athena/ros2_ws/install/learning_tf2_py/lib/python3.10/site-packages",
+        "/home/athena/ros2_ws/install/launch_tutorial/lib/python3.10/site-packages",
+        "/opt/ros/iron/lib/python3.10/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/athena/ros2_ws/install/py_srvcli/lib/python3.10/site-packages",
+        "/home/athena/ros2_ws/install/tutorial_interfaces/lib/python3.10/site-packages",
+        "/home/athena/ros2_ws/install/learning_tf2_py/lib/python3.10/site-packages",
+        "/home/athena/ros2_ws/install/launch_tutorial/lib/python3.10/site-packages",
+        "/opt/ros/iron/lib/python3.10/site-packages"
+    ]
+}
