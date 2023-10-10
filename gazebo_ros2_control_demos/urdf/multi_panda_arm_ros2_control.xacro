@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+  <!--
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control_2">
+        <parameters>$(find franka_description)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+-->
+
+ <xacro:macro name="panda_arm_ros2_control" params="ns namespace simulation_controllers">
+
+  <gazebo>
+     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <ros>
+            <namespace>${namespace}</namespace>
+        </ros>
+        <!--<parameters>$(find gazebo_ros2_control_demos)/config/boxer_controller.yaml</parameters>-->
+        <parameters>${simulation_controllers}</parameters>
+    </plugin>
+  </gazebo>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="wheel_left_joint">
+        <command_interface name="velocity">
+            <param name="min">-1.0</param>
+            <param name="max">1.0</param>
+        </command_interface>
+        <state_interface name="position" />
+        <state_interface name="velocity" />
+    </joint>
+
+    <joint name="wheel_right_joint">
+        <command_interface name="velocity">
+            <param name="min">-1.0</param>
+            <param name="max">1.0</param>
+        </command_interface>
+        <state_interface name="velocity" />
+        <state_interface name="position" />
+    </joint>
+
+    <xacro:macro name="configure_joint" params="joint_name initial_position">
+    <joint name="${joint_name}">
+        <param name="initial_position">${initial_position}</param>
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/> 
+    </joint>
+    </xacro:macro>
+
+    <xacro:configure_joint joint_name="${ns}_joint1" initial_position="0.0"/>
+    <xacro:configure_joint joint_name="${ns}_joint2" initial_position="${-pi/4}"/>
+    <xacro:configure_joint joint_name="${ns}_joint3" initial_position="0.0"/>
+    <xacro:configure_joint joint_name="${ns}_joint4" initial_position="${-3*pi/4}"/>
+    <xacro:configure_joint joint_name="${ns}_joint5" initial_position="0.0"/>
+    <xacro:configure_joint joint_name="${ns}_joint6" initial_position="${pi/2}"/>
+    <xacro:configure_joint joint_name="${ns}_joint7" initial_position="${pi/4}"/>
+
+    </ros2_control>
+  </xacro:macro>
+
+  <xacro:property name="robot_name" value="panda" />
+
+    <!-- Friction parameters-->
+    <gazebo reference="${robot_name}_link0">
+        <kp>0.0</kp>
+        <kd>0.0</kd>
+        <min_depth>0</min_depth>
+
+        <!-- <max_vel>0</max_vel> -->
+
+        <slip1>0</slip1>
+        <slip2>0</slip2>
+        <mu1>0</mu1>
+        <mu2>0</mu2>
+    </gazebo>
+
+    <!-- Link1 -->
+    <gazebo reference="${robot_name}_link1">
+        <kp>0.0</kp>
+        <kd>0.0</kd>
+        <min_depth>0</min_depth>
+
+        <!-- <max_vel>0</max_vel> -->
+
+        <slip1>0</slip1>
+        <slip2>0</slip2>
+        <mu1>0</mu1>
+        <mu2>0</mu2>
+    </gazebo>
+
+    <!-- Link2 -->
+    <gazebo reference="${robot_name}_link2">
+        <mu1>0.61</mu1>
+        <mu2>0.61</mu2>
+    </gazebo>
+
+    <!-- Link3 -->
+    <gazebo reference="${robot_name}_link3">
+        <mu1>0.61</mu1>
+        <mu2>0.61</mu2>
+    </gazebo>
+
+    <!-- Link4 -->
+    <gazebo reference="${robot_name}_link4">
+        <mu1>0.61</mu1>
+        <mu2>0.61</mu2>
+    </gazebo>
+
+    <!-- Link5 -->
+    <gazebo reference="${robot_name}_link5">
+        <mu1>0.61</mu1>
+        <mu2>0.61</mu2>
+    </gazebo>
+
+    <!-- Link6 -->
+    <gazebo reference="${robot_name}_link6">
+
+        <kp>100000.0</kp>
+        <kd>100.0</kd>
+        <min_depth>0</min_depth>
+
+        <!-- <max_vel>0</max_vel> -->
+
+        <slip1>0.2</slip1>
+        <slip2>0.2</slip2>
+        <mu>0.81</mu>
+        <mu2>0.5</mu2>
+    </gazebo>
+
+    <gazebo reference="${robot_name}_link7">
+
+        <!-- <kp>50000.0</kp> -->
+        <kp>50000.0</kp>
+        <kd>1.0</kd>
+        <min_depth>0</min_depth>
+
+        <!-- <max_vel>0</max_vel> -->
+
+        <slip1>0</slip1>
+        <slip2>0</slip2>
+        <mu1>0</mu1>
+        <mu2>0</mu2>
+    </gazebo>
+</robot>

@@ -36,9 +36,9 @@ def generate_launch_description():
 
     xacro_file = os.path.join(gazebo_ros2_control_demos_path,
                               'urdf',
-                              'test_boxer.xacro.urdf')
-    rviz_file = os.path.join(get_package_share_directory('gazebo_ros2_control_demos'), 'rviz',
-                             'rviz_config.rviz')
+                              'boxer_panda.xacro.urdf')
+    #rviz_file = os.path.join(get_package_share_directory('gazebo_ros2_control_demos'), 'rviz',
+                            # 'rviz_config.rviz')
 
 
     doc = xacro.parse(open(xacro_file))
@@ -62,7 +62,7 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         output='screen',
-        arguments=['-d', rviz_file],
+        #arguments=['-d', rviz_file],
      
     )
 

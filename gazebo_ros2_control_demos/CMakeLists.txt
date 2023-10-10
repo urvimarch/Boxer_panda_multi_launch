@@ -29,6 +29,7 @@ install(DIRECTORY
   meshes
   worlds
   gazebo_ros2_control_demos
+  bag_files
   DESTINATION share/${PROJECT_NAME}/
 )
 

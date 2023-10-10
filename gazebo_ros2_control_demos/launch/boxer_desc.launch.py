@@ -13,24 +13,19 @@
 # limitations under the License.
 
 import os
-
 from ament_index_python.packages import get_package_share_directory
-
-
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess, IncludeLaunchDescription, RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-
 from launch_ros.actions import Node
-
 import xacro
 
 
 def generate_launch_description():
     gazebo = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
+                    get_package_share_directory('gazebo_ros'),  'launch/gazebo.launch.py')]),
              )
 
     gazebo_ros2_control_demos_path = os.path.join(
@@ -69,6 +64,9 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        gazebo,
+        node_robot_state_publisher,
+        spawn_entity,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_entity,
@@ -81,7 +79,5 @@ def generate_launch_description():
                 on_exit=[load_diff_drive_base_controller],
             )
         ),
-        gazebo,
-        node_robot_state_publisher,
-        spawn_entity,
+
     ])

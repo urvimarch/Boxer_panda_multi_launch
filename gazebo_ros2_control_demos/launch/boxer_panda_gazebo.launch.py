@@ -56,6 +56,9 @@ def generate_launch_description():
 
    
     return launch.LaunchDescription([
+        gazebo,
+        node_robot_state_publisher,
+        spawn_entity,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_entity,
@@ -73,10 +76,8 @@ def generate_launch_description():
                 target_action=load_diff_drive_base_controller,
                 on_exit=[load_joint_trajectory_controller],
             )
-        ),
-        gazebo,
-        node_robot_state_publisher,
-        spawn_entity,
+        )
+
     ])
 
 
