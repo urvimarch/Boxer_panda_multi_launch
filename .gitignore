@@ -11,3 +11,11 @@ rosgraph_multi.png
 rosgraph1.png
 gazebo_ros2_control_demos/bag_files/rosbag2_2023_10_09-12_43_15/metadata.yaml
 gazebo_ros2_control_demos/bag_files/rosbag2_2023_10_09-12_43_15/rosbag2_2023_10_09-12_43_15_0.mcap
+.vscode/
+.github/
+.doc/
+.docker/
+CHANGELOG.rst
+.pre-commit-config.yaml
+LICENSE
+README.md
